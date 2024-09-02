@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Text;
+using System.Text.Json.Serialization;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Processing;
@@ -219,5 +220,37 @@ namespace _workLog
                 _isImage = false;
             }
         }
+
+    #if DEBUG
+        public void DisplayAllInfo ()
+        {
+            StringBuilder xBuilder = new ();
+
+            xBuilder.AppendLine ($"Id: {Id}");
+            xBuilder.AppendLine ($"MessageId: {MessageId}");
+            xBuilder.AppendLine ($"CreatedAtUtc: {CreatedAtUtc}");
+            xBuilder.AppendLine ($"RelativePath: {RelativePath}");
+            xBuilder.AppendLine ($"RelativeUrl: {RelativeUrl}");
+            xBuilder.AppendLine ($"Path: {Path}");
+            xBuilder.AppendLine ($"Name: {Name}");
+            xBuilder.AppendLine ($"Length: {Length}");
+            xBuilder.AppendLine ($"IsImage: {IsImage}");
+
+            if (IsImage)
+            {
+                xBuilder.AppendLine ($"ImageFormat: {ImageFormat}");
+                xBuilder.AppendLine ($"ImageSize: {ImageSize}");
+                xBuilder.AppendLine ($"ResizedImageRelativePath: {ResizedImageRelativePath}");
+                xBuilder.AppendLine ($"ResizedImageRelativeUrl: {ResizedImageRelativeUrl}");
+                xBuilder.AppendLine ($"ResizedImagePath: {ResizedImagePath}");
+                xBuilder.AppendLine ($"ResizedImageLength: {ResizedImageLength}");
+                xBuilder.AppendLine ($"ResizedImageSize: {ResizedImageSize}");
+            }
+
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write (xBuilder);
+            Console.ResetColor ();
+        }
+    #endif
     }
 }
