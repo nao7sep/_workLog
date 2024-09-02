@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
+using SixLabors.ImageSharp.Processing;
 
 namespace _workLog
 {
@@ -145,6 +146,66 @@ namespace _workLog
             }
 
             set => _resizedImageSize = value;
+        }
+
+        private void _tryHandleImage ()
+        {
+            try
+            {
+                if (_isImage is false)
+                    return;
+
+                using Image xImage = Image.Load (Path);
+
+                if (xImage.Metadata.DecodedImageFormat is null)
+                    throw new Exception ("Image format is unknown.");
+
+                Size xImageSize = xImage.Size;
+
+                try
+                {
+                    if (xImage.Width > 1024 || xImage.Height > 1024)
+                    {
+                        xImage.Mutate (x => x.Resize (new ResizeOptions
+                        {
+                            Mode = ResizeMode.Max,
+                            Size = new (1024, 1024)
+                        }));
+                    }
+
+                    string xResizedDirectoryPath = System.IO.Path.Join (System.IO.Path.GetDirectoryName (Path), "Resized");
+                    Directory.CreateDirectory (xResizedDirectoryPath);
+
+                    string xResizedImageRelativePath = System.IO.Path.Join (System.IO.Path.GetDirectoryName (RelativePath), "Resized", Name),
+                        xResizedImagePath = Environment.MapPath (xResizedImageRelativePath);
+
+                    var xEncoder = xImage.Configuration.ImageFormatsManager.GetEncoder (xImage.Metadata.DecodedImageFormat);
+                    xImage.Save (xResizedImagePath, xEncoder);
+
+                    _isImage = true;
+                    _imageFormat = xImage.Metadata.DecodedImageFormat;
+                    _imageSize = xImageSize;
+                    _resizedImageRelativePath = xResizedImageRelativePath;
+                    // _resizedImagePath = xResizedImagePath;
+                    _resizedImageLength = new FileInfo (xResizedImagePath).Length;
+                    _resizedImageSize = xImage.Size;
+                }
+
+                catch // Failure upon resizing the image.
+                {
+                    string xResizedDirectoryPath = System.IO.Path.Join (System.IO.Path.GetDirectoryName (Path), "Resized");
+
+                    if (Directory.Exists (xResizedDirectoryPath) && Directory.GetFileSystemEntries (xResizedDirectoryPath).Length == 0)
+                        Directory.Delete (xResizedDirectoryPath);
+
+                    _isImage = false;
+                }
+            }
+
+            catch // Failure upon loading the image.
+            {
+                _isImage = false;
+            }
         }
     }
 }
