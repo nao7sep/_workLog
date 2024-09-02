@@ -15,7 +15,8 @@ class Program
 
         finally
         {
-            Logger.Default.Flush ();
+            if (Logger.Default.Messages.Any ())
+                Logger.Default.Flush ();
         }
     }
 }
