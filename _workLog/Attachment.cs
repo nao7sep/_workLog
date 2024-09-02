@@ -157,6 +157,9 @@ namespace _workLog
 
                 using Image xImage = Image.Load (Path);
 
+                // https://docs.sixlabors.com/articles/imagesharp/imageformats.html
+                // https://docs.sixlabors.com/api/ImageSharp/SixLabors.ImageSharp.Metadata.ImageMetadata.html#SixLabors_ImageSharp_Metadata_ImageMetadata_DecodedImageFormat
+
                 if (xImage.Metadata.DecodedImageFormat is null)
                     throw new Exception ("Image format is unknown.");
 
@@ -164,6 +167,12 @@ namespace _workLog
 
                 try
                 {
+                    // https://docs.sixlabors.com/articles/imagesharp/gettingstarted.html
+                    // https://docs.sixlabors.com/articles/imagesharp/processing.html
+                    // https://docs.sixlabors.com/articles/imagesharp/resize.html
+                    // https://docs.sixlabors.com/api/ImageSharp/SixLabors.ImageSharp.Processing.ResizeOptions.html
+                    // https://docs.sixlabors.com/api/ImageSharp/SixLabors.ImageSharp.Processing.ResizeMode.html
+
                     if (xImage.Width > 1024 || xImage.Height > 1024)
                     {
                         xImage.Mutate (x => x.Resize (new ResizeOptions
@@ -178,6 +187,9 @@ namespace _workLog
 
                     string xResizedImageRelativePath = System.IO.Path.Join (System.IO.Path.GetDirectoryName (RelativePath), "Resized", Name),
                         xResizedImagePath = Environment.MapPath (xResizedImageRelativePath);
+
+                    // https://docs.sixlabors.com/api/ImageSharp/SixLabors.ImageSharp.Formats.ImageFormatManager.html
+                    // https://docs.sixlabors.com/api/ImageSharp/SixLabors.ImageSharp.Formats.IImageEncoder.html
 
                     var xEncoder = xImage.Configuration.ImageFormatsManager.GetEncoder (xImage.Metadata.DecodedImageFormat);
                     xImage.Save (xResizedImagePath, xEncoder);
