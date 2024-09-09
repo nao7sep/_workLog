@@ -126,7 +126,7 @@ namespace _workLog
             get
             {
                 if (_resizedImageLength is null)
-                    _tryHandleImage ();
+                    _tryHandleImage (); // It's simpler to let _tryHandleImage handle all image-related properties.
 
                 return _resizedImageLength;
             }
@@ -153,7 +153,7 @@ namespace _workLog
         {
             try
             {
-                if (_isImage is false)
+                if (_isImage is not null)
                     return;
 
                 using Image xImage = Image.Load (Path);
@@ -186,6 +186,9 @@ namespace _workLog
                     string xResizedDirectoryPath = System.IO.Path.Join (System.IO.Path.GetDirectoryName (Path), "Resized");
                     Directory.CreateDirectory (xResizedDirectoryPath);
 
+                    // Important: If we eventually choose to create 2 or more resized images here, ALL of them will have to contain an unique word in their name.
+                    // If we make Hoge-large.jpg and Hoge.jpg for Hoge.jpg for example, uploading Hoge-large.jpg will overwrite the existing Hoge-large.jpg.
+
                     string xResizedImageRelativePath = System.IO.Path.Join (System.IO.Path.GetDirectoryName (RelativePath), "Resized", Name),
                         xResizedImagePath = Environment.MapPath (xResizedImageRelativePath);
 
@@ -215,7 +218,7 @@ namespace _workLog
                 }
             }
 
-            catch // Failure upon loading the image.
+            catch // Failure upon loading the image (or deleting the Resized directory).
             {
                 _isImage = false;
             }

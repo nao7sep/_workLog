@@ -13,7 +13,7 @@ namespace _workLog
         public Logger ()
         {
             CreatedAtUtc = DateTime.UtcNow;
-            Path = Environment.MapPath (@$"Logs\{CreatedAtUtc:yyyyMMdd'T'HHmmss'Z'}.log");
+            Path = Environment.MapPath (@$"Logs\Log-{CreatedAtUtc:yyyyMMdd'T'HHmmss'Z'}.log");
         }
 
         public void LogAndDisplay (string message, bool flush = false)
